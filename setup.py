@@ -19,7 +19,7 @@ requirements = [
     'tendril-validation>=0.1.1',
     'tendril-prototype-base>=0.1.1',
     'tendril-conventions-status>=0.1.1',
-    'tendril-dox-labelmaker>=0.1.3',
+    'tendril-dox-labelmaker>=0.1.4',
     'tendril-utils-yaml>=0.1.1',
 ]
 
