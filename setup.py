@@ -18,6 +18,9 @@ requirements = [
     'tendril-costing>=0.1.2',
     'tendril-validation>=0.1.1',
     'tendril-prototype-base>=0.1.1',
+    'tendril-conventions-status>=0.1.1',
+    'tendril-dox-labelmaker>=0.1.3',
+    'tendril-utils-yaml>=0.1.1',
 ]
 
 test_requirements = [
@@ -26,7 +29,7 @@ test_requirements = [
 
 setup(
     name='tendril-products',
-    version='0.1.1',
+    version='0.1.2',
     description="Tendril Products Primitives",
     long_description=readme,
     author="Chintalagiri Shashank",
