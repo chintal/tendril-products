@@ -16,13 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+from tendril.utils import log
 
 from tendril.entities.products.prototype import ProductPrototypeBase
 from tendril.utils.config import INSTANCE_ROOT
-from tendril.utils import log
+
 logger = log.get_logger(__name__, log.INFO)
-
-
 PRODUCTS_ROOT = os.path.join(INSTANCE_ROOT, 'products')
 
 

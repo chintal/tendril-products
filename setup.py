@@ -29,7 +29,7 @@ test_requirements = [
 
 setup(
     name='tendril-products',
-    version='0.1.2',
+    version='0.1.3',
     description="Tendril Products Primitives",
     long_description=readme,
     author="Chintalagiri Shashank",

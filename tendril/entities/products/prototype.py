@@ -22,6 +22,7 @@ See the COPYING, README, and INSTALL files for more information
 import warnings
 import importlib
 
+from tendril.utils import log
 from tendril.costing.breakup import HierachicalCostingBreakup
 from tendril.validation.base import ValidatableBase
 from tendril.entities.prototypebase import PrototypeBase
@@ -41,7 +42,6 @@ try:
 except ImportError:
     get_prototype_lib = None
 
-from tendril.utils import log
 logger = log.get_logger(__name__, log.INFO)
 
 
