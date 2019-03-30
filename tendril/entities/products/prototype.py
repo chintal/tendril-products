@@ -123,13 +123,13 @@ class ProductPrototypeBase(PrototypeBase):
         with open(self._fpath, 'r') as f:
             self._raw_data = yaml.load(f)
         self._name = self._raw_data['name']
-        self._card_names = self._raw_data['cards']
-        self._cable_names = self._raw_data['cables']
-        self._labels = self._raw_data['labels']
+        self._card_names = self._raw_data.get('cards', [])
+        self._cable_names = self._raw_data.get('cables', [])
+        self._labels = self._raw_data.get('labels', [])
         # TODO Some products don't have a viable core. Allowances must be made
         # Eg QM and QI.
-        self._core = self._raw_data['derive_sno_from']
-        self._calibformat = self._raw_data['calibformat']
+        self._core = self._raw_data.get('derive_sno_from', None)
+        self._calibformat = self._raw_data.get('calibformat', None)
         try:
             self._product_info = get_product_info_class(
                     self._raw_data['productinfo']['line'],
