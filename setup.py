@@ -14,7 +14,8 @@ with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    'tendril-utils-core>=0.1.7',
+    'tendril-utils-core>=0.1.9',
+    'tendril-config>=0.1.1',
     'tendril-costing>=0.1.2',
     'tendril-validation>=0.1.1',
     'tendril-prototype-base>=0.1.1',
@@ -29,7 +30,7 @@ test_requirements = [
 
 setup(
     name='tendril-products',
-    version='0.1.3',
+    version='0.1.4',
     description="Tendril Products Primitives",
     long_description=readme,
     author="Chintalagiri Shashank",
