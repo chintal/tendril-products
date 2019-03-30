@@ -19,7 +19,7 @@ import os
 from tendril.utils import log
 
 from tendril.entities.products.prototype import ProductPrototypeBase
-from tendril.utils.config import INSTANCE_ROOT
+from tendril.config.legacy import INSTANCE_ROOT
 
 logger = log.get_logger(__name__, log.INFO)
 PRODUCTS_ROOT = os.path.join(INSTANCE_ROOT, 'products')
