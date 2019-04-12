@@ -28,7 +28,7 @@ from tendril.entities.prototypebase import PrototypeBase
 from tendril.dox.labelmaker import manager
 from tendril.utils.versions import FeatureUnavailable
 
-from tendril.schema.products import TendrilProductSchema
+from tendril.schema.products import ProductDefinition
 
 try:
     from tendril.boms.outputbase import CompositeOutputBom
@@ -62,7 +62,7 @@ class ProductPrototypeBase(PrototypeBase):
         self._load_product_info()
 
     def _load_product_info(self):
-        self._definition = TendrilProductSchema(self._fpath)
+        self._definition = ProductDefinition(self._fpath)
         self._definition.validate()
         self._validation_errors.add(self._definition.validation_errors)
 

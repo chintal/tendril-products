@@ -71,6 +71,26 @@ class SimpleBomLineCard(SimpleBomLine):
     _itemtype = 'card'
 
 
+class SimpleBomItemDecl(NakedSchemaObject):
+    def elements(self):
+        e = super(SimpleBomItemDecl, self).elements()
+        e.update({
+            '_ident': self._p(None, required=True),
+        })
+        return e
+
+    @property
+    def qty(self):
+        return 1
+
+    @property
+    def ident(self):
+        return self._ident
+
+    def __repr__(self):
+        return "<SimpleBomItemDecl {0}, {1}>".format(self.ident, self.qty)
+
+
 class SimpleBomLineCable(SimpleBomLine):
     _itemtype = 'cable'
 
@@ -80,11 +100,13 @@ class SimpleBomListing(SchemaObjectList):
 
 
 class SimpleCardListing(SimpleBomListing):
-    _objtype = SimpleBomLineCard
+    _objtype = [(dict, SimpleBomLineCard),
+                ('default', SimpleBomItemDecl)]
 
 
 class SimpleCableListing(SimpleBomListing):
-    _objtype = SimpleBomLineCable
+    _objtype = [(dict, SimpleBomLineCable),
+                ('default', SimpleBomItemDecl)]
 
 
 class ProductDefinition(SchemaControlledYamlFile):
