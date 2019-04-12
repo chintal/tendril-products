@@ -20,17 +20,15 @@ See the COPYING, README, and INSTALL files for more information
 """
 
 import warnings
-import importlib
 
 from tendril.utils import log
 from tendril.costing.breakup import HierachicalCostingBreakup
-from tendril.validation.base import ValidatableBase
 from tendril.entities.prototypebase import PrototypeBase
 
-from tendril.conventions import status
 from tendril.dox.labelmaker import manager
-from tendril.utils.files import yml as yaml
 from tendril.utils.versions import FeatureUnavailable
+
+from tendril.schema.products import TendrilProductSchema
 
 try:
     from tendril.boms.outputbase import CompositeOutputBom
@@ -45,67 +43,11 @@ except ImportError:
 logger = log.get_logger(__name__, log.INFO)
 
 
-def get_product_info_class(line, infodict, *args, **kwargs):
-    modname = 'tendril.entities.products.infoclasses.{0}'.format(line)
-    mod = importlib.import_module(modname)
-    func = getattr(mod, 'get_info_class')
-    instance = func(infodict, *args, **kwargs)
-    return instance
-
-
-class ProductInfo(ValidatableBase):
-    def __init__(self, infodict, parent):
-        super(ProductInfo, self).__init__()
-        self._parent = parent
-        self._infodict = infodict
-
-    @property
-    def ident(self):
-        return self._parent.ident
-
-    def labelinfo(self, sno):
-        return sno, {}
-
-    @property
-    def line(self):
-        # TODO Setup validation
-        return self._infodict['line']
-
-    @property
-    def ptype(self):
-        # TODO Setup validation
-        return self._infodict['type']
-
-    @property
-    def desc(self):
-        # TODO Setup validation
-        return self._infodict['desc']
-
-    @property
-    def version(self):
-        # TODO Setup validation
-        try:
-            return self._infodict['version']
-        except KeyError:
-            return None
-
-    @property
-    def status(self):
-        # TODO Setup validation
-        try:
-            return status.get_status(self._infodict['status'])
-        except KeyError:
-            return status.get_status('Undefined')
-
-    def _validate(self):
-        pass
-
-
+# MOVE TO SCHEMA?
 class ProductPrototypeBase(PrototypeBase):
     def __init__(self, fpath):
         super(ProductPrototypeBase, self).__init__()
         self._fpath = fpath
-        self._raw_data = None
         self._product_info = None
         self._cards = None
         self._card_names = None
@@ -120,32 +62,34 @@ class ProductPrototypeBase(PrototypeBase):
         self._load_product_info()
 
     def _load_product_info(self):
-        with open(self._fpath, 'r') as f:
-            self._raw_data = yaml.load(f)
-        self._name = self._raw_data['name']
-        self._card_names = self._raw_data.get('cards', [])
-        self._cable_names = self._raw_data.get('cables', [])
-        self._labels = self._raw_data.get('labels', [])
-        # TODO Some products don't have a viable core. Allowances must be made
-        # Eg QM and QI.
-        self._core = self._raw_data.get('derive_sno_from', None)
-        self._calibformat = self._raw_data.get('calibformat', None)
-        try:
-            self._product_info = get_product_info_class(
-                    self._raw_data['productinfo']['line'],
-                    infodict=self._raw_data['productinfo'], parent=self
-                )
-        except ImportError:
-            self._product_info = ProductInfo(
-                infodict=self._raw_data['productinfo'], parent=self
-            )
+        self._definition = TendrilProductSchema(self._fpath)
+        self._definition.validate()
+        self._validation_errors.add(self._definition.validation_errors)
+
+        # self._card_names = self._raw_data.get('cards', [])
+        # self._cable_names = self._raw_data.get('cables', [])
+        # self._labels = self._raw_data.get('labels', [])
+        # # TODO Some products don't have a viable core. Allowances must be made
+        # # Eg QM and QI.
+        # self._core = self._raw_data.get('derive_sno_from', None)
+        # self._calibformat = self._raw_data.get('calibformat', None)
+        # try:
+        #     self._product_info = get_product_info_class(
+        #             self._raw_data['productinfo']['line'],
+        #             infodict=self._raw_data['productinfo'], parent=self
+        #         )
+        # except ImportError:
+        #     self._product_info = ProductInfo(
+        #         infodict=self._raw_data['productinfo'], parent=self
+        #     )
 
     @property
     def ident(self):
-        if self.info.version:
-            return "{0} v{1}".format(self.name, self.version)
-        else:
-            return self.name
+        return self.name
+        # if self.info.version:
+        #     return "{0} v{1}".format(self.name, self.version)
+        # else:
+        #     return self.name
 
     @property
     def version(self):
@@ -153,7 +97,7 @@ class ProductPrototypeBase(PrototypeBase):
 
     @property
     def name(self):
-        return self._name
+        return self._definition.name
 
     @property
     def info(self):
