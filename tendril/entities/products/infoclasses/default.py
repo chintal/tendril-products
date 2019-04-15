@@ -34,11 +34,11 @@ class ProductInfo(NakedSchemaObject):
             'ptype':          self._p('type',           required=False),
             'desc':           self._p('desc'),
             'version':        self._p('version',        required=False),
-            'status':         self._p('status',         required=False, default='Undefined'),
-            'is_hardware':    self._p('is_hardware',    required=False, default=False),
-            'is_software':    self._p('is_software',    required=False, default=False),
-            'is_firmware':    self._p('is_firmware',    required=False, default=False),
-            'is_third_party': self._p('is_third_party', required=False, default=False),
+            'status':         self._p('status',         required=False, default='Undefined'),  # noqa
+            'is_hardware':    self._p('is_hardware',    required=False, default=False),  # noqa
+            'is_software':    self._p('is_software',    required=False, default=False),  # noqa
+            'is_firmware':    self._p('is_firmware',    required=False, default=False),  # noqa
+            'is_third_party': self._p('is_third_party', required=False, default=False),  # noqa
         })
         return e
 
