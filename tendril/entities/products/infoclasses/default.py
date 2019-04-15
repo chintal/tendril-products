@@ -20,7 +20,6 @@ See the COPYING, README, and INSTALL files for more information
 """
 
 from tendril.schema.base import NakedSchemaObject
-from tendril.conventions import status
 
 
 class ProductInfo(NakedSchemaObject):
@@ -62,6 +61,6 @@ class ProductInfo(NakedSchemaObject):
     def status(self):
         # TODO Setup validation
         try:
-            return status.get_status(self._raw['status'])
+            return self._raw['status']
         except KeyError:
-            return status.get_status('Undefined')
+            return 'Undefined'

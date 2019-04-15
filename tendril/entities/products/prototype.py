@@ -19,13 +19,10 @@ This file is part of tendril
 See the COPYING, README, and INSTALL files for more information
 """
 
-import warnings
-
 from tendril.utils import log
 from tendril.costing.breakup import HierachicalCostingBreakup
 from tendril.entities.prototypebase import PrototypeBase
 
-from tendril.dox.labelmaker import manager
 from tendril.utils.versions import FeatureUnavailable
 
 from tendril.schema.products import ProductDefinition
@@ -43,100 +40,64 @@ except ImportError:
 logger = log.get_logger(__name__, log.INFO)
 
 
-# MOVE TO SCHEMA?
-class ProductPrototypeBase(PrototypeBase):
+class ProductPrototype(PrototypeBase):
     def __init__(self, fpath):
-        super(ProductPrototypeBase, self).__init__()
-        self._fpath = fpath
-        self._product_info = None
+        super(ProductPrototype, self).__init__()
         self._cards = None
-        self._card_names = None
         self._cables = None
-        self._cable_names = None
-        self._labels = None
         self._boms = None
         self._obom = None
         self._sourcing_errors = None
         self._indicative_cost_hierarchical_breakup = None
+        self._load_product_info(fpath)
 
-        self._load_product_info()
-
-    def _load_product_info(self):
-        self._definition = ProductDefinition(self._fpath)
+    def _load_product_info(self, fpath):
+        self._definition = ProductDefinition(fpath)
         self._definition.validate()
         self._validation_errors.add(self._definition.validation_errors)
 
-        # self._card_names = self._raw_data.get('cards', [])
-        # self._cable_names = self._raw_data.get('cables', [])
-        # self._labels = self._raw_data.get('labels', [])
-        # # TODO Some products don't have a viable core. Allowances must be made
-        # # Eg QM and QI.
-        # self._core = self._raw_data.get('derive_sno_from', None)
-        # self._calibformat = self._raw_data.get('calibformat', None)
-        # try:
-        #     self._product_info = get_product_info_class(
-        #             self._raw_data['productinfo']['line'],
-        #             infodict=self._raw_data['productinfo'], parent=self
-        #         )
-        # except ImportError:
-        #     self._product_info = ProductInfo(
-        #         infodict=self._raw_data['productinfo'], parent=self
-        #     )
+    _definition_elements = (
+        'name',
+        'core',
+        'calibformat',
+        'line',
+        'info',
+        'card_listing',
+        'cable_listing'
+    )
+
+    def __getattr__(self, item):
+        if item in self._definition_elements:
+            return getattr(self._definition, item)
 
     @property
     def ident(self):
-        return self.name
-        # if self.info.version:
-        #     return "{0} v{1}".format(self.name, self.version)
-        # else:
-        #     return self.name
+        return self._definition.ident
 
     @property
-    def version(self):
-        return self._product_info.version
+    def desc(self):
+        return self._definition.info.desc
+
+    def _get_status(self):
+        return self._definition.info.status
 
     @property
-    def name(self):
-        return self._definition.name
+    def labels(self):
+        return self._definition.labels.content
 
-    @property
-    def info(self):
-        return self._product_info
+    def labelinfo(self, sno):
+        return self.info.labelinfo(sno)
 
-    @property
-    def core(self):
-        return self._core
-
-    @staticmethod
-    def _parse_listing(listing):
-        rval = []
-        for cname in listing:
-            if cname is None:
-                continue
-            if isinstance(cname, dict):
-                qty = cname['qty']
-                try:
-                    cname = cname['card']
-                except KeyError:
-                    cname = cname['cable']
-            else:
-                qty = 1
-                cname = cname
-            rval.append((cname, qty))
-        return rval
-
-    @property
-    def card_listing(self):
-        return self._parse_listing(self._card_names)
-
-    @property
-    def cable_listing(self):
-        return self._parse_listing(self._cable_names)
+    # @property
+    # def calibformat(self):
+    #     # TODO Get the calibformat object instead
+    #     return self._calibformat
 
     @property
     def module_listing(self):
         return {k: v for k, v in (self.card_listing + self.cable_listing)}
 
+    # Libraries
     @staticmethod
     def _get_modules(parsed_listing):
         if get_prototype_lib is None:
@@ -160,37 +121,7 @@ class ProductPrototypeBase(PrototypeBase):
             self._cables = self._get_modules(self.cable_listing)
         return self._cables
 
-    @property
-    def labels(self):
-        return self._labels
-
-    def labelinfo(self, sno):
-        return self._product_info.labelinfo(sno)
-
-    @property
-    def calibformat(self):
-        return self._calibformat
-
-    def get_component_snos(self):
-        pass
-
-    def make_labels(self, sno, label_manager=None):
-        if label_manager is None:
-            label_manager = manager
-        labelinfo = self.labelinfo(sno)
-        if labelinfo is not None:
-            for l in self.labels:
-                label_manager.add_label(
-                    l['type'], self.name, labelinfo[0], **labelinfo[1]
-                )
-
-    @property
-    def desc(self):
-        return self._product_info.desc
-
-    def _get_status(self):
-        self._status = self._product_info.status
-
+    # BOMs
     def _construct_components(self):
         components = []
         for card, qty in self.cards:
@@ -203,7 +134,7 @@ class ProductPrototypeBase(PrototypeBase):
 
     def _construct_bom(self):
         if CompositeOutputBom is None:
-            raise FeatureUnavailable('Product BOMs', 
+            raise FeatureUnavailable('Product BOMs',
                                      'CompositeOutputBOM')
         self._boms = [x.obom for x in self._construct_components()]
         self._obom = CompositeOutputBom(self._boms, name=self.ident)
@@ -221,10 +152,13 @@ class ProductPrototypeBase(PrototypeBase):
             self._construct_bom()
         return self._obom
 
-    @property
-    def bom(self):
-        raise NotImplementedError
+    # @property
+    # def bom(self):
+    #     # TODO Check if this is actually necessary.
+    #            COBOM (obom) might be enough?
+    #     raise NotImplementedError
 
+    # Costing
     @property
     def indicative_cost(self):
         return self.obom.indicative_cost
@@ -252,6 +186,11 @@ class ProductPrototypeBase(PrototypeBase):
             self._indicative_cost_hierarchical_breakup = rval
         return self._indicative_cost_hierarchical_breakup
 
+    # Instantiation
+    # def get_component_snos(self):
+    #     pass
+
+    # Housekeeping
     @property
     def _changelogpath(self):
         raise NotImplementedError
@@ -267,10 +206,3 @@ class ProductPrototypeBase(PrototypeBase):
 
     def __repr__(self):
         return "<ProductPrototype {0}>".format(self.ident)
-
-
-def generate_labels(product, sno, label_manager=None):
-    warnings.warn("Deprecated use of generate_labels. Use the product "
-                  "prototype object's make_labels function directly instead.",
-                  DeprecationWarning)
-    product.make_labels(sno, label_manager)

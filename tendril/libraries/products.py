@@ -18,8 +18,8 @@
 import os
 from tendril.utils import log
 
-from tendril.entities.products.prototype import ProductPrototypeBase
-from tendril.config.legacy import INSTANCE_ROOT
+from tendril.entities.products.prototype import ProductPrototype
+from tendril.config import INSTANCE_ROOT
 
 logger = log.get_logger(__name__, log.INFO)
 PRODUCTS_ROOT = os.path.join(INSTANCE_ROOT, 'products')
@@ -33,7 +33,7 @@ def get_folder_products(path):
 
     for f in files:
         if f.endswith('.product.yaml'):
-            products.append(ProductPrototypeBase(os.path.join(path, f)))
+            products.append(ProductPrototype(os.path.join(path, f)))
 
     return products
 

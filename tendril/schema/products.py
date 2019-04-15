@@ -23,28 +23,11 @@ from decimal import Decimal
 from tendril.schema.base import SchemaControlledYamlFile
 from tendril.schema.base import NakedSchemaObject
 from tendril.schema.helpers import SchemaObjectList
+from tendril.schema.prototype import LabelListing
 from tendril.entities.products import infoclasses
 
 from tendril.utils import log
 logger = log.get_logger(__name__, log.DEFAULT)
-
-
-class LabelDeclaration(NakedSchemaObject):
-    def elements(self):
-        e = super(LabelDeclaration, self).elements()
-        e.update({
-            'desc': self._p(('desc',), required=True),
-            'type': self._p(('type',), required=True),
-        })
-        return e
-
-    def __repr__(self):
-        return "<LabelDeclaration {0}, {1}>" \
-               "".format(self.desc, self.type)
-
-
-class LabelListing(SchemaObjectList):
-    _objtype = LabelDeclaration
 
 
 class SimpleBomLine(NakedSchemaObject):
@@ -142,8 +125,26 @@ class ProductDefinition(SchemaControlledYamlFile):
         return policies
 
     @property
+    def version(self):
+        return self.info.version
+
+    @property
     def ident(self):
-        return self.name
+        if self.info.version:
+            return "{0} v{1}".format(self.name, self.info.version)
+        else:
+            return self.name
+
+    def _parse_listing(self, listing):
+        return [(i.ident, i.qty) for i in listing]
+
+    @property
+    def card_listing(self):
+        return self._parse_listing(self.cards)
+
+    @property
+    def cable_listing(self):
+        return self._parse_listing(self.cables)
 
     def __repr__(self):
         return "<ProductDefinition {0}>".format(self.ident)
