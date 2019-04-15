@@ -27,40 +27,24 @@ class ProductInfo(NakedSchemaObject):
         self._parent = kwargs.pop('parent')
         super(ProductInfo, self).__init__(*args, **kwargs)
 
+    def elements(self):
+        e = super(ProductInfo, self).elements()
+        e.update({
+            'line':           self._p('line'),
+            'ptype':          self._p('type',           required=False),
+            'desc':           self._p('desc'),
+            'version':        self._p('version',        required=False),
+            'status':         self._p('status',         required=False, default='Undefined'),
+            'is_hardware':    self._p('is_hardware',    required=False, default=False),
+            'is_software':    self._p('is_software',    required=False, default=False),
+            'is_firmware':    self._p('is_firmware',    required=False, default=False),
+            'is_third_party': self._p('is_third_party', required=False, default=False),
+        })
+        return e
+
     @property
     def ident(self):
         return self._parent.ident
 
     def labelinfo(self, sno):
         return sno, {}
-
-    @property
-    def line(self):
-        # TODO Setup validation
-        return self._raw['line']
-
-    @property
-    def ptype(self):
-        # TODO Setup validation
-        return self._raw['type']
-
-    @property
-    def desc(self):
-        # TODO Setup validation
-        return self._raw['desc']
-
-    @property
-    def version(self):
-        # TODO Setup validation
-        try:
-            return self._raw['version']
-        except KeyError:
-            return None
-
-    @property
-    def status(self):
-        # TODO Setup validation
-        try:
-            return self._raw['status']
-        except KeyError:
-            return 'Undefined'

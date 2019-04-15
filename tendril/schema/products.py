@@ -103,14 +103,14 @@ class ProductDefinition(SchemaControlledYamlFile):
     def elements(self):
         e = super(ProductDefinition, self).elements()
         e.update({
-            'name':        self._p(('name',),   required=True),
-            'core':        self._p(('derive_sno_from',),),
-            'calibformat': self._p(('calibformat',),),
-            'cards':       self._p(('cards',),  parser=SimpleCardListing),
-            'cables':      self._p(('cables',), parser=SimpleCableListing),
-            'labels':      self._p(('labels',), parser=LabelListing),
-            'line':        self._p(('productinfo', 'line',), required=True),
-            'info':        self._p(('productinfo',),         parser=self._get_info_instance),
+            'name':        self._p('name'),
+            'core':        self._p('derive_sno_from', required=False),
+            'calibformat': self._p('calibformat',     required=False),
+            'cards':       self._p('cards',           required=False, parser=SimpleCardListing, default={}),
+            'cables':      self._p('cables',          required=False, parser=SimpleCableListing, default={}),
+            'labels':      self._p('labels',          required=False, parser=LabelListing, default={}),
+            'line':        self._p(('productinfo', 'line',)),
+            'info':        self._p('productinfo',     parser=self._get_info_instance),
         })
         return e
 
