@@ -63,12 +63,16 @@ class ProductPrototype(PrototypeBase):
         'line',
         'info',
         'card_listing',
-        'cable_listing'
+        'cable_listing',
+        'pricing'
     )
 
     def __getattr__(self, item):
         if item in self._definition_elements:
             return getattr(self._definition, item)
+        else:
+            raise AttributeError("{1} does not have attribute {0}"
+                                 "".format(item, self.__class__))
 
     @property
     def ident(self):

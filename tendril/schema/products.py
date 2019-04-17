@@ -24,6 +24,7 @@ from tendril.schema.base import SchemaControlledYamlFile
 from tendril.schema.base import NakedSchemaObject
 from tendril.schema.helpers import SchemaObjectList
 from tendril.schema.prototype import LabelListing
+from tendril.pricing.base import StructuredUnitPrice
 from tendril.entities.products import infoclasses
 
 from tendril.utils import log
@@ -111,6 +112,7 @@ class ProductDefinition(SchemaControlledYamlFile):
             'labels':      self._p('labels',          required=False, parser=LabelListing, default={}),
             'line':        self._p(('productinfo', 'line',)),
             'info':        self._p('productinfo',     parser=self._get_info_instance),
+            'pricing':     self._p('pricing',         required=False, parser=StructuredUnitPrice)
         })
         return e
 
