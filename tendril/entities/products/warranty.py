@@ -49,6 +49,11 @@ class WarrantyTerms(NakedSchemaObject):
 
 class WarrantyMixin(object):
     def _warranty_apply(self, wtype, years, **kwargs):
+        if self.pricing.get_included_addon(wtype):
+            raise ValueError(
+                "Warranty of type {0} already added to this product. Remove it "
+                "before trying to add it again".format(wtype.upper())
+            )
         if isinstance(years, six.string_types):
             years = DateSpan(years)
         elif isinstance(years, Number):
@@ -61,7 +66,7 @@ class WarrantyMixin(object):
                 "".format(wtype.upper(), w_max)
             )
 
-        self.pricing.include_addon(wtype, qty=years, **kwargs)
+        self.pricing.include_addon(wtype, unit=DateSpan('1yr'), qty=years, **kwargs)
 
     def add_extended_warranty(self, years, **kwargs):
         self._warranty_apply('ext', years, **kwargs)

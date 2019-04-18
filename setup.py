@@ -20,7 +20,7 @@ requirements = [
     'tendril-schema>=0.1.11',
     'tendril-prototype-base>=0.1.3',
     'tendril-costing>=0.1.2',
-    'tendril-pricing>=0.1.4'
+    'tendril-pricing>=0.1.5'
 ]
 
 test_requirements = [
@@ -29,7 +29,7 @@ test_requirements = [
 
 setup(
     name='tendril-products',
-    version='0.1.11',
+    version='0.1.12',
     description="Tendril Products Primitives",
     long_description=readme,
     author="Chintalagiri Shashank",
