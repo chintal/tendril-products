@@ -37,10 +37,12 @@ try:
 except ImportError:
     get_prototype_lib = None
 
+from .warranty import WarrantyMixin
+
 logger = log.get_logger(__name__, log.INFO)
 
 
-class ProductPrototype(PrototypeBase):
+class ProductPrototype(PrototypeBase, WarrantyMixin):
     def __init__(self, fpath):
         super(ProductPrototype, self).__init__()
         self._cards = None
@@ -67,9 +69,15 @@ class ProductPrototype(PrototypeBase):
         'pricing'
     )
 
+    _pricing_elements = (
+        'apply_discount'
+    )
+
     def __getattr__(self, item):
         if item in self._definition_elements:
             return getattr(self._definition, item)
+        elif item in self._pricing_elements:
+            return getattr(self.pricing, item)
         else:
             raise AttributeError("{1} does not have attribute {0}"
                                  "".format(item, self.__class__))
@@ -207,6 +215,9 @@ class ProductPrototype(PrototypeBase):
 
     def _validate(self):
         pass
+
+    def reset(self):
+        self.pricing.reset()
 
     def __repr__(self):
         return "<ProductPrototype {0}>".format(self.ident)

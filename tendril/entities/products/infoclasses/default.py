@@ -20,6 +20,7 @@ See the COPYING, README, and INSTALL files for more information
 """
 
 from tendril.schema.base import NakedSchemaObject
+from tendril.entities.products.warranty import WarrantyTerms
 
 
 class ProductInfo(NakedSchemaObject):
@@ -39,6 +40,7 @@ class ProductInfo(NakedSchemaObject):
             'is_software':    self._p('is_software',    required=False, default=False),  # noqa
             'is_firmware':    self._p('is_firmware',    required=False, default=False),  # noqa
             'is_third_party': self._p('is_third_party', required=False, default=False),  # noqa
+            'warranty':       self._p('warranty',       required=False, parser=WarrantyTerms)
         })
         return e
 
