@@ -26,6 +26,7 @@ from tendril.schema.helpers import SchemaObjectList
 from tendril.schema.prototype import LabelListing
 from tendril.pricing.structured import StructuredUnitPrice
 from tendril.entities.products import infoclasses
+from tendril.entities.products import calibformats
 
 from tendril.utils import log
 logger = log.get_logger(__name__, log.DEFAULT)
@@ -106,7 +107,7 @@ class ProductDefinition(SchemaControlledYamlFile):
         e.update({
             'name':        self._p('name'),
             'core':        self._p('derive_sno_from', required=False),
-            'calibformat': self._p('calibformat',     required=False),
+            'calibformat': self._p('calibformat',     required=False, parser=self._get_calibformat),
             'cards':       self._p('cards',           required=False, parser=SimpleCardListing, default={}),
             'cables':      self._p('cables',          required=False, parser=SimpleCableListing, default={}),
             'labels':      self._p('labels',          required=False, parser=LabelListing, default={}),
@@ -120,6 +121,9 @@ class ProductDefinition(SchemaControlledYamlFile):
         return infoclasses.get_product_info_class(
             self.line, content, parent=self, vctx=self._validation_context
         )
+
+    def _get_calibformat(self, content):
+        return calibformats.get_calibformat(content)
 
     def schema_policies(self):
         policies = super(ProductDefinition, self).schema_policies()
