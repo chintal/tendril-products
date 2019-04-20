@@ -70,7 +70,16 @@ class ProductPrototype(PrototypeBase, WarrantyMixin):
     )
 
     _pricing_elements = (
-        'apply_discount'
+        'base_price',
+        'apply_discount',
+        'discounts',
+        'effective_price',
+        'iqty',
+        'extended_price',
+        'tax',
+        'taxes',
+        'total_price',
+        'included_addons',
     )
 
     def __getattr__(self, item):
