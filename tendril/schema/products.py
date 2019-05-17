@@ -56,6 +56,10 @@ class SimpleBomLineCard(SimpleBomLine):
     _itemtype = 'card'
 
 
+class SimpleBomLineCable(SimpleBomLine):
+    _itemtype = 'cable'
+
+
 class SimpleBomItemDecl(NakedSchemaObject):
     def elements(self):
         e = super(SimpleBomItemDecl, self).elements()
@@ -74,10 +78,6 @@ class SimpleBomItemDecl(NakedSchemaObject):
 
     def __repr__(self):
         return "<SimpleBomItemDecl {0}, {1}>".format(self.ident, self.qty)
-
-
-class SimpleBomLineCable(SimpleBomLine):
-    _itemtype = 'cable'
 
 
 class SimpleBomListing(SchemaObjectList):
