@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-This file is part of tendril
-See the COPYING, README, and INSTALL files for more information
+Product Prototype Primitives
+----------------------------
+
 """
 
 from tendril.utils import log
@@ -80,6 +81,7 @@ class ProductPrototype(PrototypeBase, WarrantyMixin):
         'taxes',
         'total_price',
         'included_addons',
+        'optional_addons',
     )
 
     def __getattr__(self, item):
