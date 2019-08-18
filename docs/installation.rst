@@ -33,6 +33,7 @@ in your python environment by whatever means you usually use.
     - tendril-prototype-base
     - tendril-costing
     - tendril-pricing
+    - tendril-conventions-status
 
 ``sudo`` may be necessary if you are not installing into a virtual environment.
 

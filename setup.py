@@ -35,7 +35,8 @@ core_dependencies = [
     'tendril-schema',
     'tendril-prototype-base',
     'tendril-costing',
-    'tendril-pricing'
+    'tendril-pricing',
+    'tendril-conventions-status',
 ]
 
 install_requires = core_dependencies + ['wheel']
